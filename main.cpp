@@ -7,137 +7,185 @@
 
 using namespace std;
 
+class room
+{
+public:
+    vector<pair<int, int>> points;
+    bool has_point(pair<int, int>& point)
+    {
+        for (auto & p: points)
+        {
+            if(p == point)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+class office
+{
+public:
+    vector<room> rooms;
+    room* find_office(pair<int, int>& point)
+    {
+        for(auto &r : rooms)
+        {
+            if(r.has_point(point))
+            {
+                return &r;
+            }
+        }
+        return nullptr;
+    }
+    void add_room(pair<int, int>& p)
+    {
+        room o;
+        o.points.push_back(p);
+        rooms.push_back(o);
+    }
+};
+
 class Solution {
+    office offices;
 public:
     int numOffices(vector<vector<char>>& grid)
     {
         // Put code here
-        int offices = -1;
+        offices.rooms.clear();
+        int office_num = -1;
         size_t row_num = grid.size();
         if(row_num == 0)
         {
-            return offices;
+            return office_num;
         }
         size_t col_num = grid[0].size();
 
-        vector<set<size_t>> floors;
         for (size_t i =0; i < row_num; ++i)
         {
-            set<size_t> floor;
-            int count = 0;
+            for (size_t j = 0; j < col_num; ++j)
+            {
+                cout << static_cast<int>(grid[i][j]) << " ";
+            }
+            cout  << endl;
+        }
+        for (size_t i =0; i < row_num; ++i)
+        {
             for (size_t j = 0; j < col_num; ++j)
             {
                 if (grid[i][j] == 1)
                 {
-                    floor.insert(j);
-                    if(j == 0)
+                    pair<int, int> p(i, j);
+                    room* left_room = nullptr;
+                    if (j == 0)
                     {
-                        ++count;
+                        if(i == 0)
+                        {
+                            offices.add_room(p);
+                        }
                     }
-                    else if (grid[i][j-1] == 0)
+                    else
                     {
-                        ++count;
+                        if(grid[i][j-1] == 1)
+                        {
+                            pair<int,int> p(i, j-1);
+                            left_room = offices.find_office(p);
+                            if(left_room != nullptr)
+                            {
+                                left_room->points.push_back(pair<int,int> (i, j));
+                            }
+                            else
+                            {
+                                offices.add_room(p);
+                            }
+                        }
+                        else
+                        {
+                            if(i == 0)
+                            {
+                                offices.add_room(p);
+                            }
+                        }
                     }
-                }
-            }
+                    if ( i > 0)
+                    {
+                        if(grid[i-1][j] == 1)
+                        {
+                            pair<int,int> p(i-1, j);
+                            auto upper_room = offices.find_office(p);
+                            if(upper_room != nullptr)
+                            {
+                                if(left_room == nullptr)
+                                {
+                                    upper_room->points.push_back(pair<int,int> (i, j));
+                                }
+                                else
+                                {
+                                    // merge rooms if it is not the same room
+                                    if(upper_room != left_room)
+                                    {
+                                        room new_room;
+                                        new_room.points.insert(new_room.points.begin(),
+                                                               upper_room->points.begin(),
+                                                               upper_room->points.end());
+                                        new_room.points.insert(new_room.points.end(),
+                                                               left_room->points.begin(),
+                                                               left_room->points.end());
 
-            if(offices == -1)
-            {
-                offices  = count;
-            }
-            else
-            {
-                bool push = false;
-                for (auto w : floor)
-                {
-                    bool found = false;
-                    for(auto k : floors.back())
-                    {
-                        if (k == w)
-                        {
-                            found = true;
-                            break;
+                                        streamsize upper_index = upper_room - offices.rooms.data();
+                                        streamsize left_index  = left_room  - offices.rooms.data();
+                                        offices.rooms.erase(offices.rooms.begin() + upper_index);
+                                        offices.rooms.erase(offices.rooms.begin() + left_index);
+                                        offices.rooms.push_back(new_room);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                offices.add_room(p);
+                            }
                         }
-                    }
-                    if(! found)
-                    {
-                        push = true;
+                        else
+                        {
+                            if(left_room == nullptr)
+                            {
+                                offices.add_room(p);
+                            }
+                        }
                     }
                 }
-                if(push)
-                {
-                    int count = 0;
-                    size_t prev = 0;
-                    bool check_next = false;
-                    for(auto a : floor)
-                    {
-                        bool found = false;
-                        for(auto b : floors.back())
-                        {
-                            if (b == a)
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (! found)
-                        {
-                            if(a == 0)
-                            {
-                            ++count;
-                            }
-                            else if (a-1 != prev)
-                            {
-                                ++count;
-                                check_next = true;
-                            }
-                        }
-                        else if (a - 1 == prev && check_next)
-                        {
-                            --count;
-                            check_next = false;
-                        }
-
-                        prev = a;
-                    }
-                    offices += count;
-                }
             }
-            floors.push_back(floor);
         }
-        return offices;
+        return static_cast<int>(offices.rooms.size());
     }
     int bigestTable(vector<vector<char>>& grid)
     {
         // Put code here
-        int offices = -1;
+        int max_rect_size = -1;
         size_t row_num = grid.size();
         if(row_num == 0)
         {
-            return offices;
+            return max_rect_size;
         }
-        size_t col_num = grid[0].size();
+        const size_t col_num = grid[0].size();
+        vector<char> line(col_num);
 
-        vector<vector<size_t>> floors;
-        for (size_t i =0; i < row_num; ++i)
+        for (auto& r : offices.rooms)
         {
-            vector<size_t> floor;
-            for (size_t j = 0; j < col_num; ++j)
+            for(auto& p: r.points)
             {
-                if (grid[i][j] == 1)
-                {
-                    floor.push_back(j);
-                }
+                int a =0;
             }
-            floors.push_back(floor);
         }
-        return offices;
+        return max_rect_size;
     }
 };
 
 
-bool test_report( string title, int n, int expected, bool& done)
+bool test_report( string title, string pass, int n, int expected, bool& done)
 {
+    done = true;
     if(n != expected)
     {
         cerr << title << ": ERROR: expected " << expected << ", got " << n << endl;
@@ -145,8 +193,9 @@ bool test_report( string title, int n, int expected, bool& done)
     }
     else
     {
-        cout << title << ": found offices: " << n << endl;
+        cout << title << pass << n << endl;
     }
+    return done;
 }
 
 bool test_numOffices()
@@ -159,70 +208,71 @@ bool test_numOffices()
                                  {0,0,0,0,0}};
 
     auto n = solution.numOffices(vect);
-    test_report("numOffices-0100", n,1,done);
+    test_report("numOffices-0100", ": found offices: ",n,1,done);
+    n = solution.bigestTable(vect);
 
     vect = {{1,0,0,0,0},
             {1,0,0,0,0},
             {1,0,0,0,0},
             {1,0,0,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0101", n,1,done);
+    test_report("numOffices-0101", ": found offices: ", n,1,done);
 
     vect = {{0,1,0,0,0},
             {0,1,0,0,0},
             {0,1,0,0,0},
             {0,1,0,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0102", n,1,done);
+    test_report("numOffices-0102", ": found offices: ", n,1,done);
 
     vect = {{0,0,1,0,0},
             {0,0,1,0,0},
             {0,0,1,0,0},
             {0,0,1,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0103", n,1,done);
+    test_report("numOffices-0103", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,1,0},
             {0,0,0,1,0},
             {0,0,0,1,0},
             {0,0,0,1,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0104", n,1,done);
+    test_report("numOffices-0104", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,0,1},
             {0,0,0,0,1},
             {0,0,0,0,1},
             {0,0,0,0,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0105", n,1,done);
+    test_report("numOffices-0105", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
             {0,0,0,0,0},
             {0,0,0,0,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0106", n,1,done);
+    test_report("numOffices-0106", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,0,0},
             {1,1,1,1,1},
             {0,0,0,0,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0107", n,1,done);
+    test_report("numOffices-0107", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,0,0},
             {0,0,0,0,0},
             {1,1,1,1,1},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0108", n,1,done);
+    test_report("numOffices-0108", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,0,0},
             {0,0,0,0,0},
             {0,0,0,0,0},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0109", n,1,done);
+    test_report("numOffices-0109", ": found offices: ", n,1,done);
 
 
     vect = {{1,1,1,1,1},
@@ -230,112 +280,199 @@ bool test_numOffices()
             {0,0,0,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0110", n,1,done);
+    test_report("numOffices-0110", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
             {1,0,0,0,1},
             {1,0,0,0,1},
             {1,0,0,0,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0111", n,1,done);
+    test_report("numOffices-0111", ": found offices: ", n,1,done);
 
     vect = {{1,0,0,0,1},
             {1,0,0,0,1},
             {1,0,0,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0112", n,1,done);
+    test_report("numOffices-0112", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
             {1,0,0,0,0},
             {1,0,0,0,0},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0113", n,1,done);
+    test_report("numOffices-0113", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,0},
             {1,0,0,0,0},
             {1,0,0,0,0},
             {1,1,1,1,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0114", n,1,done);
+    test_report("numOffices-0114", ": found offices: ", n,1,done);
 
     vect = {{1,0,0,0,1},
             {1,1,1,1,1},
             {1,0,0,0,1},
             {1,0,0,0,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0115", n,1,done);
+    test_report("numOffices-0115", ": found offices: ", n,1,done);
 
     vect = {{1,0,0,0,1},
             {1,1,1,1,1},
             {1,0,0,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0116", n,1,done);
+    test_report("numOffices-0116", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
             {1,0,0,0,1},
             {1,0,0,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0117", n,1,done);
+    test_report("numOffices-0117", ": found offices: ", n,1,done);
 
     vect = {{1,1,0,1,0},
             {1,1,0,1,0},
             {1,1,1,1,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0118", n,1,done);
+    test_report("numOffices-0118", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,0},
             {1,1,0,1,0},
             {1,1,1,1,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0119", n,1,done);
+    test_report("numOffices-0119", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,0},
             {1,1,0,0,0},
             {1,1,1,1,0},
             {0,0,1,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0120", n,1,done);
+    test_report("numOffices-0120", ": found offices: ", n,1,done);
 
     vect = {{1,1,0,1,1},
             {1,1,0,1,0},
             {1,1,1,1,1},
             {0,1,0,1,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-1021", n,1,done);
+    test_report("numOffices-1021", ": found offices: ", n,1,done);
 
     vect = {{0,1,0,1,1},
             {1,1,1,1,0},
             {1,1,1,1,1},
             {0,1,0,1,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0122", n,1,done);
+    test_report("numOffices-0122", ": found offices: ", n,1,done);
+
+    vect = {{1,0,0,0,0},
+            {1,0,0,0,0},
+            {1,0,0,0,0},
+            {1,1,1,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0123", ": found offices: ", n,1,done);
+
+    vect = {{1,1,1,1,1},
+            {1,0,1,0,1},
+            {1,0,1,0,1},
+            {1,1,1,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0124", ": found offices: ", n,1,done);
+
+
+    vect = {{1,1,1,1,1},
+            {1,0,1,0,1},
+            {1,1,1,1,1},
+            {1,0,1,0,1},
+            {1,1,1,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0125", ": found offices: ", n,1,done);
+
+    vect = {{1,1,1,1,1},
+            {1,0,1,0,1},
+            {1,1,0,1,1},
+            {1,0,1,0,1},
+            {1,1,1,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0126", ": found offices: ", n,1,done);
 
     vect = {{1,1,0,1,0},
             {1,1,0,1,0},
             {1,1,0,1,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0200", n,2,done);
+    test_report("numOffices-0200", ": found offices: ", n,2,done);
+
+    vect = {{1,1,1,1,1},
+            {1,0,1,0,1},
+            {0,0,0,0,0},
+            {1,0,1,0,1},
+            {1,1,1,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0201", ": found offices: ", n,2,done);
+
+    vect = {{1,1,1,1,1},
+            {1,1,1,1,1},
+            {0,0,0,0,0},
+            {1,1,1,1,1},
+            {1,1,1,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0202", ": found offices: ", n,2,done);
+
+    vect = {{1,1,0,1,1},
+            {1,1,0,1,1},
+            {1,0,0,0,1},
+            {1,1,0,1,1},
+            {1,1,0,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0203", ": found offices: ", n,2,done);
 
     vect = {{1,0,0,0,0},
             {0,1,0,0,0},
             {0,0,1,0,0},
             {0,0,0,1,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0400", n,4,done);
+    test_report("numOffices-0400", ": found offices: ", n,4,done);
+
+    vect = {{1,1,0,0,1},
+            {1,1,0,0,1},
+            {0,0,1,1,0},
+            {1,0,1,1,0}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0401", ": found offices: ", n,4,done);
+
+    vect = {{1,1,1,1,1},
+            {0,0,0,1,0},
+            {0,1,0,1,1},
+            {1,0,1,0,1},
+            {1,0,0,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0402", ": found offices: ", n,4,done);
+
 
     vect = {{1,0,0,0,1},
             {0,1,0,1,0},
             {0,0,1,0,0},
             {0,0,0,1,0}};
     n = solution.numOffices(vect);
-    test_report("numOffices-0600", n,6,done);
+    test_report("numOffices-0600", ": found offices: ", n,6,done);
+
+    vect = {{0,1,1,0,1},
+            {1,1,0,1,0},
+            {0,1,0,1,0},
+            {0,0,1,0,0},
+            {1,1,0,1,0}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0601", ": found offices: ", n,6,done);
+
+    vect = {{1,1,0,0,1},
+            {0,1,1,1,0},
+            {0,1,0,1,0},
+            {1,0,1,0,1},
+            {0,1,0,1,1}};
+    n = solution.numOffices(vect);
+    test_report("numOffices-0602", ": found offices: ", n,6,done);
 
 
     return done;
