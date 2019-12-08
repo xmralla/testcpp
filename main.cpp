@@ -50,6 +50,25 @@ public:
 
 typedef vector<vector<char>> grid_t;
 
+
+void print_grid(grid_t& grid)
+{
+    size_t row_num = grid.size();
+    if(row_num != 0)
+    {
+        size_t col_num = grid[0].size();
+
+        for (size_t i =0; i < row_num; ++i)
+        {
+            for (size_t j = 0; j < col_num; ++j)
+            {
+                cout << static_cast<int>(grid[i][j]) << " ";
+            }
+            cout  << endl;
+        }
+    }
+}
+
 class Solution {
     office offices;
 public:
@@ -65,14 +84,6 @@ public:
         }
         size_t col_num = grid[0].size();
 
-        for (size_t i =0; i < row_num; ++i)
-        {
-            for (size_t j = 0; j < col_num; ++j)
-            {
-                cout << static_cast<int>(grid[i][j]) << " ";
-            }
-            cout  << endl;
-        }
         for (size_t i =0; i < row_num; ++i)
         {
             for (size_t j = 0; j < col_num; ++j)
@@ -211,6 +222,7 @@ bool test_numOffices()
                    {0,0,0,0,0}};
 
     auto n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0100", ": found offices: ",n,1,done);
     n = solution.bigestTable(vect);
 
@@ -219,6 +231,7 @@ bool test_numOffices()
             {1,0,0,0,0},
             {1,0,0,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0101", ": found offices: ", n,1,done);
 
     vect = {{0,1,0,0,0},
@@ -226,6 +239,7 @@ bool test_numOffices()
             {0,1,0,0,0},
             {0,1,0,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0102", ": found offices: ", n,1,done);
 
     vect = {{0,0,1,0,0},
@@ -233,6 +247,7 @@ bool test_numOffices()
             {0,0,1,0,0},
             {0,0,1,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0103", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,1,0},
@@ -240,6 +255,7 @@ bool test_numOffices()
             {0,0,0,1,0},
             {0,0,0,1,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0104", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,0,1},
@@ -247,6 +263,7 @@ bool test_numOffices()
             {0,0,0,0,1},
             {0,0,0,0,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0105", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
@@ -254,6 +271,7 @@ bool test_numOffices()
             {0,0,0,0,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0106", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,0,0},
@@ -261,6 +279,7 @@ bool test_numOffices()
             {0,0,0,0,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0107", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,0,0},
@@ -268,6 +287,7 @@ bool test_numOffices()
             {1,1,1,1,1},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0108", ": found offices: ", n,1,done);
 
     vect = {{0,0,0,0,0},
@@ -275,6 +295,7 @@ bool test_numOffices()
             {0,0,0,0,0},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0109", ": found offices: ", n,1,done);
 
 
@@ -283,6 +304,7 @@ bool test_numOffices()
             {0,0,0,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0110", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
@@ -290,6 +312,7 @@ bool test_numOffices()
             {1,0,0,0,1},
             {1,0,0,0,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0111", ": found offices: ", n,1,done);
 
     vect = {{1,0,0,0,1},
@@ -297,6 +320,7 @@ bool test_numOffices()
             {1,0,0,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0112", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
@@ -304,6 +328,7 @@ bool test_numOffices()
             {1,0,0,0,0},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0113", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,0},
@@ -311,6 +336,7 @@ bool test_numOffices()
             {1,0,0,0,0},
             {1,1,1,1,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0114", ": found offices: ", n,1,done);
 
     vect = {{1,0,0,0,1},
@@ -318,6 +344,7 @@ bool test_numOffices()
             {1,0,0,0,1},
             {1,0,0,0,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0115", ": found offices: ", n,1,done);
 
     vect = {{1,0,0,0,1},
@@ -325,6 +352,7 @@ bool test_numOffices()
             {1,0,0,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0116", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
@@ -332,6 +360,7 @@ bool test_numOffices()
             {1,0,0,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0117", ": found offices: ", n,1,done);
 
     vect = {{1,1,0,1,0},
@@ -339,6 +368,7 @@ bool test_numOffices()
             {1,1,1,1,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0118", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,0},
@@ -346,6 +376,7 @@ bool test_numOffices()
             {1,1,1,1,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0119", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,0},
@@ -353,6 +384,7 @@ bool test_numOffices()
             {1,1,1,1,0},
             {0,0,1,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0120", ": found offices: ", n,1,done);
 
     vect = {{1,1,0,1,1},
@@ -360,6 +392,7 @@ bool test_numOffices()
             {1,1,1,1,1},
             {0,1,0,1,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-1021", ": found offices: ", n,1,done);
 
     vect = {{0,1,0,1,1},
@@ -367,6 +400,7 @@ bool test_numOffices()
             {1,1,1,1,1},
             {0,1,0,1,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0122", ": found offices: ", n,1,done);
 
     vect = {{1,0,0,0,0},
@@ -374,6 +408,7 @@ bool test_numOffices()
             {1,0,0,0,0},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0123", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
@@ -381,6 +416,7 @@ bool test_numOffices()
             {1,0,1,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0124", ": found offices: ", n,1,done);
 
 
@@ -390,6 +426,7 @@ bool test_numOffices()
             {1,0,1,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0125", ": found offices: ", n,1,done);
 
     vect = {{1,1,1,1,1},
@@ -398,6 +435,7 @@ bool test_numOffices()
             {1,0,1,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0126", ": found offices: ", n,1,done);
 
     vect = {{1,1,0,1,0},
@@ -405,6 +443,7 @@ bool test_numOffices()
             {1,1,0,1,0},
             {0,0,0,0,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0200", ": found offices: ", n,2,done);
 
     vect = {{1,1,1,1,1},
@@ -413,6 +452,7 @@ bool test_numOffices()
             {1,0,1,0,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0201", ": found offices: ", n,2,done);
 
     vect = {{1,1,1,1,1},
@@ -421,6 +461,7 @@ bool test_numOffices()
             {1,1,1,1,1},
             {1,1,1,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0202", ": found offices: ", n,2,done);
 
     vect = {{1,1,0,1,1},
@@ -429,6 +470,7 @@ bool test_numOffices()
             {1,1,0,1,1},
             {1,1,0,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0203", ": found offices: ", n,2,done);
 
     vect = {{1,0,0,0,0},
@@ -436,6 +478,7 @@ bool test_numOffices()
             {0,0,1,0,0},
             {0,0,0,1,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0400", ": found offices: ", n,4,done);
 
     vect = {{1,1,0,0,1},
@@ -443,6 +486,7 @@ bool test_numOffices()
             {0,0,1,1,0},
             {1,0,1,1,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0401", ": found offices: ", n,4,done);
 
     vect = {{1,1,1,1,1},
@@ -451,6 +495,7 @@ bool test_numOffices()
             {1,0,1,0,1},
             {1,0,0,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0402", ": found offices: ", n,4,done);
 
 
@@ -459,6 +504,7 @@ bool test_numOffices()
             {0,0,1,0,0},
             {0,0,0,1,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0600", ": found offices: ", n,6,done);
 
     vect = {{0,1,1,0,1},
@@ -467,6 +513,7 @@ bool test_numOffices()
             {0,0,1,0,0},
             {1,1,0,1,0}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0601", ": found offices: ", n,6,done);
 
     vect = {{1,1,0,0,1},
@@ -475,6 +522,7 @@ bool test_numOffices()
             {1,0,1,0,1},
             {0,1,0,1,1}};
     n = solution.numOffices(vect);
+    print_grid(vect);
     test_report("numOffices-0602", ": found offices: ", n,6,done);
 
 
