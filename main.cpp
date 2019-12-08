@@ -47,10 +47,13 @@ public:
     }
 };
 
+
+typedef vector<vector<char>> grid_t;
+
 class Solution {
     office offices;
 public:
-    int numOffices(vector<vector<char>>& grid)
+    int numOffices(grid_t& grid)
     {
         // Put code here
         offices.rooms.clear();
@@ -159,7 +162,7 @@ public:
         }
         return static_cast<int>(offices.rooms.size());
     }
-    int bigestTable(vector<vector<char>>& grid)
+    int bigestTable(grid_t& grid)
     {
         // Put code here
         int max_rect_size = -1;
@@ -202,10 +205,10 @@ bool test_numOffices()
 {
     bool done = true;
     Solution solution;
-    vector<vector<char>> vect = {{1,1,1,1,0},
-                                 {1,1,0,1,0},
-                                 {1,1,0,0,0},
-                                 {0,0,0,0,0}};
+    grid_t vect = {{1,1,1,1,0},
+                   {1,1,0,1,0},
+                   {1,1,0,0,0},
+                   {0,0,0,0,0}};
 
     auto n = solution.numOffices(vect);
     test_report("numOffices-0100", ": found offices: ",n,1,done);
