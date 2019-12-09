@@ -48,10 +48,10 @@ public:
 };
 
 
-typedef vector<vector<char>> grid_t;
+typedef vector<vector<int>> grid_vector;
 
 
-void print_grid(grid_t& grid)
+void print_grid(grid_vector& grid)
 {
     size_t row_num = grid.size();
     if(row_num != 0)
@@ -72,7 +72,7 @@ void print_grid(grid_t& grid)
 class Solution {
     office offices;
 public:
-    int numOffices(grid_t& grid)
+    int numOffices(grid_vector& grid)
     {
         // Put code here
         offices.rooms.clear();
@@ -147,8 +147,9 @@ public:
                                                                left_room->points.begin(),
                                                                left_room->points.end());
 
-                                        streamsize upper_index = upper_room - offices.rooms.data();
-                                        streamsize left_index  = left_room  - offices.rooms.data();
+                                        streamsize upper_index = upper_room - &offices.rooms[0];
+                                        streamsize left_index  = left_room  - &offices.rooms[0];
+
                                         offices.rooms.erase(offices.rooms.begin() + upper_index);
                                         offices.rooms.erase(offices.rooms.begin() + left_index);
                                         offices.rooms.push_back(new_room);
@@ -173,7 +174,7 @@ public:
         }
         return static_cast<int>(offices.rooms.size());
     }
-    int bigestTable(grid_t& grid)
+    int bigestTable(grid_vector& grid)
     {
         // Put code here
         int max_rect_size = -1;
@@ -216,7 +217,7 @@ bool test_numOffices()
 {
     bool done = true;
     Solution solution;
-    grid_t vect = {{1,1,1,1,0},
+    grid_vector vect = {{1,1,1,1,0},
                    {1,1,0,1,0},
                    {1,1,0,0,0},
                    {0,0,0,0,0}};
@@ -393,7 +394,7 @@ bool test_numOffices()
             {0,1,0,1,0}};
     n = solution.numOffices(vect);
     print_grid(vect);
-    test_report("numOffices-1021", ": found offices: ", n,1,done);
+    test_report("numOffices-0121", ": found offices: ", n,1,done);
 
     vect = {{0,1,0,1,1},
             {1,1,1,1,0},
